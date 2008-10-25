@@ -9,15 +9,20 @@
     <div id="whole_page">
       <div id="header">RailsSpace</div>
       <div id="nav">
-        <%= link_to_unless_current "Home",       :action => "index" %> |
-        <%= link_to_unless_current "About Us",   :action => "about" %> |
-        <%= link_to_unless_current "Help",       :action => "help" %>
+        <%= link_to_unless_current "Home",      :action => "index",
+                                                :controller => "site" %> |
+        <%= link_to_unless_current "About Us",  :action => "about",
+                                                :controller => "site" %> |
+        <%= link_to_unless_current "Help",      :action => "help",
+                                                :controller => "site" %> |
+        <%= link_to_unless_current "Register",  :action => "register",
+                                                :controller => "user" %>
       </div>
       <div id="content">
         <% if flash[:notice] -%>
           <div id="notice"><%= flash[:notice] %></div>
         <% end -%>
-        <%= @content_for_layout %>
+        <%= yield %>
       </div>
       <% if ENV["RAILS_ENV"] == "development" %>
         <%= debug(params) %>
