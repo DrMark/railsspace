@@ -10,11 +10,15 @@
     <div id="whole_page">
       <div id="header">RailsSpace</div>
       <div id="nav">
-        <%= nav_link "Home",       "site" %> |
-        <%= nav_link "About Us",   "site", "about" %> |
-        <%= nav_link "Help",       "site", "help" %> |
-        <%= nav_link "Register",   "user", "register" %>
+        <span style="float: right">
+          <%= nav_link "Register", "user", "register" %> |
+          <%= nav_link "Login",    "user", "login" %>
+        </span>
+        <%= nav_link "Home",     "site" %> |
+        <%= nav_link "About Us", "site", "about" %> |
+        <%= nav_link "Help",     "site", "help" %>
       </div>
+
       <div id="content">
         <% if flash[:notice] -%>
           <div id="notice"><%= flash[:notice] %></div>
