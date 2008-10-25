@@ -5,7 +5,7 @@ class SiteControllerTest < ActionController::TestCase
   def test_index
     get :index
     title = assigns(:title)
-    assert_equal "Welcome to RailsSpace!", title
+    assert_equal "RailsSpace", title
     assert_response :success
     assert_template "index"
     end
