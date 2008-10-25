@@ -1,7 +1,13 @@
 class UserController < ApplicationController
 
   def index
+    unless session[:user_id]
+      flash[:notice] = "Please log in first"
+      redirect_to :action => "login"
+      return
+    end
     @title = "RailsSpace User Hub"
+    # This will be a protected page for viewing user information.
   end
 
   def register
