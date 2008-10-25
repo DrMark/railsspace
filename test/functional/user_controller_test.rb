@@ -31,4 +31,21 @@ class UserControllerTest < ActionController::TestCase
     assert_tag   "input", :attributes => { :type => "submit",
                                           :value => "Register!" }
   end
+
+  # Test a valid registration.
+  def test_registration_success
+    post :register, :user => { :screen_name => "new_screen_name",
+                                :email       => "valid@example.com",
+                               :password     => "long_enough_password" }
+    # Test assignment of user.
+    user = assigns(:user)
+    assert_not_nil user
+    # Test new user in database.
+    new_user = User.find_by_screen_name_and_password(user.screen_name,
+                                                     user.password)
+    assert_equal new_user, user
+    # Test flash and redirect.
+    assert_equal "User #{new_user.screen_name} created!", flash[:notice]
+    assert_redirected_to :action => "index"
+  end
 end
