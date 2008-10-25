@@ -113,4 +113,30 @@ class UserTest < ActiveSupport::TestCase
     correct_error_message = sprintf(@error_messages[:too_long], max_length)
     assert_equal correct_error_message, user.errors.on(:email)
   end
+
+  # Test the email validator against valid email addresses.
+  def test_email_with_valid_examples
+    user = @valid_user
+    valid_endings = %w{com org net edu es jp info}
+    valid_emails = valid_endings.collect do |ending|
+      "foo.bar_1-9@baz-quux0.example.#{ending}"
+    end
+    valid_emails.each do |email|
+      user.email = email
+      assert user.valid?, "#{email} must be a valid email address"
+    end
+  end
+
+  # Test the email validator against invalid email addresses.
+  def test_email_with_invalid_examples
+    user = @valid_user
+    invalid_emails = %w{foobar@example.c @example.com f@com foo@bar..com
+                        foobar@example.infod foobar.example.com
+                        foo,@example.com foo@ex(ample.com foo@example,com}
+    invalid_emails.each do |email|
+      user.email = email
+      assert !user.valid?, "#{email} tests as valid but shouldn't be"
+      assert_equal "must be a valid email address", user.errors.on(:email)
+    end
+  end
 end
