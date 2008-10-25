@@ -150,6 +150,17 @@ class UserControllerTest < ActionController::TestCase
     assert_nil user.password
   end
 
+  # Test the logout function.
+  def test_logout
+    try_to_login @valid_user
+    assert_not_nil session[:user_id]
+    get :logout
+    assert_response :redirect
+    assert_redirected_to :action => "index", :controller => "site"
+    assert_equal "Logged out", flash[:notice]
+    assert_nil session[:user_id]
+  end
+
   private
 
   # Try to log a user in using the login action.
