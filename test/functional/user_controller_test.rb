@@ -123,6 +123,33 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action => "index"
   end
 
+  # Test a login with invalid screen name.
+  def test_login_failure_with_nonexistent_screen_name
+    invalid_user = @valid_user
+    invalid_user.screen_name = "no such user"
+    try_to_login invalid_user
+    assert_template "login"
+    assert_equal "Invalid screen name/password combination", flash[:notice]
+    # Make sure screen_name will be redisplayed, but not the password.
+    user = assigns(:user)
+    assert_equal invalid_user.screen_name, user.screen_name
+    assert_nil user.password
+  end
+
+  # Test a login with invalid password.
+  def test_login_failure_with_wrong_password
+    invalid_user = @valid_user
+    # Construct an invalid password.
+    invalid_user.password += "baz"
+    try_to_login invalid_user
+    assert_template "login"
+    assert_equal "Invalid screen name/password combination", flash[:notice]
+    # Make sure screen_name will be redisplayed, but not the password.
+    user = assigns(:user)
+    assert_equal invalid_user.screen_name, user.screen_name
+    assert_nil user.password
+  end
+
   private
 
   # Try to log a user in using the login action.
