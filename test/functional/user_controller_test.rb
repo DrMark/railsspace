@@ -48,4 +48,36 @@ class UserControllerTest < ActionController::TestCase
     assert_equal "User #{new_user.screen_name} created!", flash[:notice]
     assert_redirected_to :action => "index"
   end
+
+  # Test an invalid registration
+  def test_registration_failure
+    post :register, :user => { :screen_name => "aa/noyes",
+                               :email => "anoyes@example,com",
+                               :password => "sun" }
+    assert_response :success
+    assert_template "register"
+    # Test display of error messages.
+    assert_tag "div", :attributes => { :id => "errorExplanation",
+                                       :class => "errorExplanation" }
+    # Assert that each form field has at least one error displayed.
+    assert_tag "li", :content => /Screen name/
+    assert_tag "li", :content => /Email/
+    assert_tag "li", :content => /Password/
+
+    # Test to see that the input fields are being wrapped with the correct div.
+    error_div = { :tag => "div", :attributes => { :class => "fieldWithErrors" } }
+
+    assert_tag "input",
+               :attributes => { :name => "user[screen_name]",
+                                 :value => "aa/noyes" },
+               :parent => error_div
+    assert_tag "input",
+               :attributes => { :name => "user[email]",
+                                 :value => "anoyes@example,com" },
+               :parent => error_div
+    assert_tag "input",
+               :attributes => { :name => "user[password]",
+                                 :value => "sun" },
+               :parent => error_div
+  end
 end
