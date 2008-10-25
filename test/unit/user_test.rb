@@ -139,4 +139,24 @@ class UserTest < ActiveSupport::TestCase
       assert_equal "must be a valid email address", user.errors.on(:email)
     end
   end
+
+  # Test the validations involving screen name with valid examples.
+  def test_screen_name_with_valid_examples
+    user = @valid_user
+    valid_screen_names = %w{aure michael web_20}
+    valid_screen_names.each do |screen_name|
+      user.screen_name = screen_name
+      assert user.valid?, "#{screen_name} should pass validation, but doesn't"
+    end
+  end
+
+  # Test the validations involving screen name with invalid examples.
+  def test_screen_name_with_invalid_examples
+    user = @valid_user
+    invalid_screen_names = %w{rails/rocks web2.0 javscript:something}
+    invalid_screen_names.each do |screen_name|
+      user.screen_name = screen_name
+      assert !user.valid?, "#{screen_name} shouldn't pass validation, but does"
+    end
+  end
 end
