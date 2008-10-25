@@ -4,17 +4,17 @@
     <legend>Enter Your Details</legend>
     <div class="form_row">
       <label for="screen_name">Screen name:</label>
-      <%= form.text_field :screen_name %>
+      <%= form.text_field :screen_name, :size => 20, :maxlength => 40 %>
     </div>
 
     <div class="form_row">
       <label for="email">Email:</label>
-      <%= form.text_field :email %>
+      <%= form.text_field :email, :size => 30, :maxlength => 50 %>
     </div>
 
     <div class="form_row">
       <label for="password">Password:</label>
-      <%= form.password_field :password %>
+      <%= form.password_field :password, :size => 10, :maxlength => 40 %>
     </div>
 
     <div class="form_row">
