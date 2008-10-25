@@ -1,6 +1,12 @@
 require 'test_helper'
 
 class UserControllerTest < ActionController::TestCase
+  fixtures :users
+
+  def setup
+    # This user is initially valid, but we may change its attributes.
+    @valid_user = users(:valid_user)
+  end
 
   # Make sure the registration page responds with the proper form.
   def test_registration_page
@@ -83,5 +89,45 @@ class UserControllerTest < ActionController::TestCase
                :attributes => { :name => "user[password]",
                                  :value => "sun" },
                :parent => error_div
+  end
+
+  # Make sure the login page works and has the right fields.
+  def test_login_page
+    get :login
+    title = assigns(:title)
+    assert_equal "Log in to RailsSpace", title
+    assert_response :success
+    assert_template "login"
+    assert_tag "form", :attributes => { :action => "/user/login",
+                                        :method => "post" }
+    assert_tag "input",
+               :attributes => { :name => "user[screen_name]",
+                                :type => "text",
+                                :size => User::SCREEN_NAME_SIZE,
+                                :maxlength => User::SCREEN_NAME_MAX_LENGTH }
+    assert_tag "input",
+               :attributes => { :name => "user[password]",
+                                :type => "password",
+                                :size => User::PASSWORD_SIZE,
+                                :maxlength => User::PASSWORD_MAX_LENGTH }
+    assert_tag "input", :attributes => { :type => "submit",
+                                         :value => "Login!" }
+  end
+
+  # Test a valid login.
+  def test_login_success
+    try_to_login @valid_user
+    assert_not_nil session[:user_id]
+    assert_equal @valid_user.id, session[:user_id]
+    assert_equal "User #{@valid_user.screen_name} logged in!", flash[:notice]
+    assert_redirected_to :action => "index"
+  end
+
+  private
+
+  # Try to log a user in using the login action.
+  def try_to_login(user)
+    post :login, :user => { :screen_name => user.screen_name,
+      :password    => user.password }
   end
 end
