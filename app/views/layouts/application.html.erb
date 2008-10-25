@@ -9,14 +9,10 @@
     <div id="whole_page">
       <div id="header">RailsSpace</div>
       <div id="nav">
-        <%= link_to_unless_current "Home",      :action => "index",
-                                                :controller => "site" %> |
-        <%= link_to_unless_current "About Us",  :action => "about",
-                                                :controller => "site" %> |
-        <%= link_to_unless_current "Help",      :action => "help",
-                                                :controller => "site" %> |
-        <%= link_to_unless_current "Register",  :action => "register",
-                                                :controller => "user" %>
+        <%= nav_link "Home",       "site" %> |
+        <%= nav_link "About Us",   "site", "about" %> |
+        <%= nav_link "Help",       "site", "help" %> |
+        <%= nav_link "Register",   "user", "register" %>
       </div>
       <div id="content">
         <% if flash[:notice] -%>
