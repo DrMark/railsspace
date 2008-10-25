@@ -1,11 +1,7 @@
 class UserController < ApplicationController
+  before_filter :protect, :only => :index
 
   def index
-    unless session[:user_id]
-      flash[:notice] = "Please log in first"
-      redirect_to :action => "login"
-      return
-    end
     @title = "RailsSpace User Hub"
     # This will be a protected page for viewing user information.
   end
@@ -44,5 +40,16 @@ class UserController < ApplicationController
     session[:user_id] = nil
     flash[:notice] = "Logged out"
     redirect_to :action => "index", :controller => "site"
+  end
+
+  private
+
+  # Protect a page from unauthorized access.
+  def protect
+    unless session[:user_id]
+      flash[:notice] = "Please log in first"
+      redirect_to :action => "login"
+      return false
+    end
   end
 end
