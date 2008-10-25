@@ -161,11 +161,26 @@ class UserControllerTest < ActionController::TestCase
     assert_nil session[:user_id]
   end
 
+  # Test the navigation menu after login.
+  def test_navigation_logged_in
+    authorize @valid_user
+    get :index
+    assert_tag "a", :content => /Logout/,
+               :attributes => { :href => "/user/logout" }
+    assert_no_tag "a", :content => /Register/
+    assert_no_tag "a", :content => /Login/
+  end
+
   private
 
   # Try to log a user in using the login action.
   def try_to_login(user)
     post :login, :user => { :screen_name => user.screen_name,
       :password    => user.password }
+  end
+
+  # Authorize a user.
+  def authorize(user)
+    @request.session[:user_id] = user.id
   end
 end
