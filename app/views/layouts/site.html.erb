@@ -5,6 +5,10 @@
     <title><%= @title %></title>
   </head>
   <body>
+    <%= link_to("Home",     { :action => "index" }) %> |
+    <%= link_to("About Us", { :action => "about" }) %> |
+    <%= link_to("Help",     { :action => "help"  }) %>
+
     <%= @content_for_layout %>
   </body>
 </html>
