@@ -5,10 +5,9 @@
     <title><%= @title %></title>
   </head>
   <body>
-    <%= link_to("Home",     { :action => "index" }) %> |
-    <%= link_to("About Us", { :action => "about" }) %> |
-    <%= link_to("Help",     { :action => "help"  }) %>
-
+    <%= link_to_unless_current "Home",     :action => "index" %> |
+    <%= link_to_unless_current "About Us", :action => "about" %> |
+    <%= link_to_unless_current "Help",     :action => "help" %>
     <%= @content_for_layout %>
   </body>
 </html>
