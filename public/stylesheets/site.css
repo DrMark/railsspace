@@ -141,3 +141,13 @@ label {
   font-size: 11pt;
   list-style: square;
 }
+
+/* Flash Notice Style */
+#notice {
+  border: 1px solid green;
+  padding: 1em;
+  margin: 1em;
+  margin-bottom: 2em;
+  background-color: lightgray;
+  font: bold smaller sans-serif;
+}
