@@ -3,6 +3,7 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
 
   def setup
+    @error_messages = ActiveRecord::Errors.default_error_messages
     @valid_user = users(:valid_user)
     @invalid_user = users(:invalid_user)
   end
@@ -27,7 +28,7 @@ class UserTest < ActiveSupport::TestCase
                            :email => @valid_user.email,
                            :password => @valid_user.password)
     assert !user_repeat.valid?
-    assert_equal "has already been taken", user_repeat.errors.on(:screen_name)
-    assert_equal "has already been taken", user_repeat.errors.on(:email)
+    assert_equal @error_messages[:taken], user_repeat.errors.on(:screen_name)
+    assert_equal @error_messages[:taken], user_repeat.errors.on(:email)
   end
 end
