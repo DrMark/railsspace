@@ -11,14 +11,18 @@
       <div id="header">RailsSpace</div>
       <div id="nav">
         <span style="float: right">
-          <%= nav_link "Register", "user", "register" %> |
-          <%= nav_link "Login",    "user", "login" %>
+          <% if session[:user_id] -%>
+            <%= nav_link "Hub", "user", "index" %> |
+            <%= nav_link "Logout", "user", "logout" %>
+          <% else -%>
+            <%= nav_link "Register", "user", "register" %> |
+            <%= nav_link "Login",    "user", "login" %>
+          <% end -%>
         </span>
         <%= nav_link "Home",     "site" %> |
         <%= nav_link "About Us", "site", "about" %> |
         <%= nav_link "Help",     "site", "help" %>
       </div>
-
       <div id="content">
         <% if flash[:notice] -%>
           <div id="notice"><%= flash[:notice] %></div>
