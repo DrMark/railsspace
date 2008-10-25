@@ -1,2 +1,24 @@
-<h1>User#register</h1>
-<p>Find me in app/views/user/register.html.erb</p>
+<h2>Register</h2>
+<% form_for :user do |form| %>
+  <fieldset>
+    <legend>Enter Your Details</legend>
+    <div class="form_row">
+      <label for="screen_name">Screen name:</label>
+      <%= form.text_field :screen_name %>
+    </div>
+
+    <div class="form_row">
+      <label for="email">Email:</label>
+      <%= form.text_field :email %>
+    </div>
+
+    <div class="form_row">
+      <label for="password">Password:</label>
+      <%= form.password_field :password %>
+    </div>
+
+    <div class="form_row">
+      <%= submit_tag "Register!", :class => "submit" %>
+    </div>
+  </fieldset>
+<% end %>
