@@ -47,6 +47,10 @@ class UserControllerTest < ActionController::TestCase
     # Test flash and redirect.
     assert_equal "User #{new_user.screen_name} created!", flash[:notice]
     assert_redirected_to :action => "index"
+
+    # Make sure user is logged in properly.
+    assert_not_nil session[:user_id]
+    assert_equal user.id, session[:user_id]
   end
 
   # Test an invalid registration
