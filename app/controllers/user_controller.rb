@@ -1,6 +1,7 @@
 class UserController < ApplicationController
 
   def index
+    @title = "RailsSpace User Hub"
   end
 
   def register
