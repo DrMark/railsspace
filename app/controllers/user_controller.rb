@@ -53,7 +53,7 @@ class UserController < ApplicationController
   end
 
   def logout
-    User.logout!(session)
+    User.logout!(session, cookies)
     flash[:notice] = "Logged out"
     redirect_to :action => "index", :controller => "site"
   end
