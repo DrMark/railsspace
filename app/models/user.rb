@@ -30,4 +30,9 @@ class User < ActiveRecord::Base
   def login!(session)
     session[:user_id] = id
   end
+
+  # Log a user out.
+  def self.logout!(session)
+    session[:user_id] = nil
+  end
 end

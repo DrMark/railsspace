@@ -48,7 +48,7 @@ class UserController < ApplicationController
   end
 
   def logout
-    session[:user_id] = nil
+    User.logout!(session)
     flash[:notice] = "Logged out"
     redirect_to :action => "index", :controller => "site"
   end
