@@ -9,7 +9,7 @@ class UserController < ApplicationController
 
   def register
     @title = "Register"
-    if request.post? and params[:user]
+    if param_posted?(:user)
       @user = User.new(params[:user])
       if @user.save
         @user.login!(session)
@@ -28,7 +28,7 @@ class UserController < ApplicationController
 
   def login
     @title = "Log in to RailsSpace"
-    if request.post? and params[:user]
+    if param_posted?(:user)
       @user = User.new(params[:user])
       user = User.find_by_screen_name_and_password(@user.screen_name,
                                                    @user.password)
@@ -64,5 +64,10 @@ class UserController < ApplicationController
       redirect_to :action => "login"
       return false
     end
+  end
+
+  # Return true if a parameter corresponding to the given symbol was posted.
+  def param_posted?(symbol)
+    request.post? and params[symbol]
   end
 end
