@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  attr_accessor :remember_me
+
   # Max & min lengths for all fields
   SCREEN_NAME_MIN_LENGTH = 4
   SCREEN_NAME_MAX_LENGTH = 20
