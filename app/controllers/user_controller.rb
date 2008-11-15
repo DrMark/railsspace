@@ -1,4 +1,3 @@
-require 'digest/sha1'
 class UserController < ApplicationController
   include ApplicationHelper
   before_filter :protect, :only => :index
@@ -33,14 +32,7 @@ class UserController < ApplicationController
       if user
         user.login!(session)
         if @user.remember_me == "1"
-          cookies[:remember_me] = { :value   => "1",
-                                    :expires => 10.years.from_now }
-          user.authorization_token = Digest::SHA1.hexdigest(
-                                       "#{user.screen_name}:#{user.password}")
-          user.save!
-          cookies[:authorization_token] = {
-            :value   => user.authorization_token,
-            :expires => 10.years.from_now }
+          user.remember!(cookies)
         else
           cookies.delete(:remember_me)
           cookies.delete(:authorization_token)
