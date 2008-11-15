@@ -113,23 +113,54 @@ class UserControllerTest < Test::Unit::TestCase
                                 :type => "text",
                                 :size => User::SCREEN_NAME_SIZE,
                                 :maxlength => User::SCREEN_NAME_MAX_LENGTH }
-    assert_tag "input",
-               :attributes => { :name => "user[password]",
-                                :type => "password",
-                                :size => User::PASSWORD_SIZE,
-                                :maxlength => User::PASSWORD_MAX_LENGTH }
+    assert_tag "input", :attributes => { :name => "user[remember_me]",
+                                         :type => "checkbox" }
     assert_tag "input", :attributes => { :type => "submit",
                                          :value => "Login!" }
   end
 
   # Test a valid login.
   def test_login_success
-    try_to_login @valid_user
+    try_to_login @valid_user, :remember_me => "0"
     assert logged_in?
     assert_equal @valid_user.id, session[:user_id]
     assert_equal "User #{@valid_user.screen_name} logged in!", flash[:notice]
     assert_response :redirect
     assert_redirected_to :action => "index"
+
+    # Verify that we're not remembering the user.
+    user = assigns(:user)
+    assert user.remember_me != "1"
+    # There should be no cookies set.
+    assert_nil cookie_value(:remember_me)
+    assert_nil cookie_value(:authorization_token)
+  end
+
+  # Test a valid login with the remember box checked.
+  def test_login_success_with_remember_me
+    try_to_login @valid_user, :remember_me => "1"
+    test_time = Time.now
+    assert logged_in?
+    assert_equal @valid_user.id, session[:user_id]
+    assert_equal "User #{@valid_user.screen_name} logged in!", flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action => "index"
+
+    # Check cookies and expiration dates.
+    user = User.find(@valid_user.id)
+    time_range = 100 # microseconds range for time agreement
+
+    # Remember me cookie
+    assert_equal "1", cookie_value(:remember_me)
+    assert_in_delta 10.years.from_now(test_time),
+                    cookie_expires(:remember_me),
+                    time_range
+
+    # Authorization cookie
+    assert_equal user.authorization_token, cookie_value(:authorization_token)
+    assert_in_delta 10.years.from_now(test_time),
+                    cookie_expires(:authorization_token),
+                    time_range
   end
 
   # Test a login with invalid screen name.
@@ -215,9 +246,13 @@ class UserControllerTest < Test::Unit::TestCase
   private
 
   # Try to log a user in using the login action.
-  def try_to_login(user)
-    post :login, :user => { :screen_name => user.screen_name,
-                            :password    => user.password }
+  # Pass :remember_me => "0" or :remember_me => "1" in options
+  # to invoke the remember me machinery.
+  def try_to_login(user, options = {})
+    user_hash = { :screen_name => user.screen_name,
+                  :password    => user.password }
+    user_hash.merge!(options)
+    post :login, :user => user_hash
   end
 
   # Authorize a user.
@@ -236,5 +271,15 @@ class UserControllerTest < Test::Unit::TestCase
     assert_redirected_to :action => protected_page
     # Make sure the forwarding url has been cleared.
     assert_nil session[:protected_page]
+  end
+
+  # Return the cookie value given a symbol.
+  def cookie_value(symbol)
+    cookies[symbol.to_s].value.first
+  end
+
+  # Return the cookie expiration given a symbol.
+  def cookie_expires(symbol)
+    cookies[symbol.to_s].expires
   end
 end
