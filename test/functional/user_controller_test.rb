@@ -192,13 +192,15 @@ class UserControllerTest < Test::Unit::TestCase
 
   # Test the logout function.
   def test_logout
-    try_to_login @valid_user
+    try_to_login @valid_user, :remember_me => "1"
     assert logged_in?
+    assert_not_nil cookie_value(:authorization_token)
     get :logout
     assert_response :redirect
     assert_redirected_to :action => "index", :controller => "site"
     assert_equal "Logged out", flash[:notice]
     assert !logged_in?
+    assert_nil cookie_value(:authorization_token)
   end
 
   # Test the navigation menu after login.
