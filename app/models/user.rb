@@ -26,4 +26,8 @@ class User < ActiveRecord::Base
                       :with => /^[A-Z0-9._%-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i,
                       :message => "must be a valid email address"
 
+  # Log a user in.
+  def login!(session)
+    session[:user_id] = id
+  end
 end
