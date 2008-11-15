@@ -27,9 +27,14 @@ class UserController < ApplicationController
       if user
         session[:user_id] = user.id
         flash[:notice] = "User #{user.screen_name} logged in!"
-        redirect_to :action => "index"
+        if (redirect_url = session[:protected_page])
+          session[:protected_page] = nil
+          redirect_to redirect_url
+        else
+          redirect_to :action => "index"
+        end
       else
-        # Don't show the password in the view.
+        # Don't show the password again in the view.
         @user.password = nil
         flash[:notice] = "Invalid screen name/password combination"
       end
@@ -47,6 +52,7 @@ class UserController < ApplicationController
   # Protect a page from unauthorized access.
   def protect
     unless session[:user_id]
+      session[:protected_page] = request.request_uri
       flash[:notice] = "Please log in first"
       redirect_to :action => "login"
       return false
