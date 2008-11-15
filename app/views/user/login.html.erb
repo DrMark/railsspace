@@ -18,6 +18,11 @@
   </div>
 
   <div class="form_row">
+    <label for="remember_me">Remember Me?:</label>
+    <%= form.check_box :remember_me %>
+  </div>
+
+  <div class="form_row">
     <%= submit_tag "Login!", :class => "submit" %>
   </div>
 
