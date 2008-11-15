@@ -56,6 +56,17 @@ class User < ActiveRecord::Base
                                       :expires => cookie_expiration }
   end
 
+  # Forget a user's login status.
+  def forget!(cookies)
+    cookies.delete(:remember_me)
+    cookies.delete(:authorization_token)
+  end
+
+  # Return true if the user wants the login status remembered.
+  def remember_me?
+    remember_me == "1"
+  end
+
   private
 
   # Generate a unique identifier for a user.
