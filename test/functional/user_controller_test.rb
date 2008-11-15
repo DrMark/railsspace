@@ -199,31 +199,17 @@ class UserControllerTest < Test::Unit::TestCase
 
   # Test forward back to protected page after login.
   def test_login_friendly_url_forwarding
-    # Get a protected page.
-    get :index
-    assert_response :redirect
-    assert_redirected_to :action => "login"
-    try_to_login @valid_user
-    assert_response :redirect
-    assert_redirected_to :action => "index"
-    # Make sure the forwarding url has been cleared.
-    assert_nil session[:protected_page]
+    user = { :screen_name => @valid_user.screen_name,
+             :password    => @valid_user.password }
+    friendly_url_forwarding_aux(:login, :index, user)
   end
 
   # Test forward back to protected page after register.
   def test_register_friendly_url_forwarding
-    # Get a protected page.
-    get :index
-    assert_response :redirect
-    assert_redirected_to :action => "login"
-    post :register, :user  => { :screen_name => "new_screen_name",
-                                :email       => "valid@example.com",
-                                :password    => "long_enough_password" }
-    assert_response :redirect
-    # This is a hack.  See http://www.ruby-forum.com/topic/69760
-    assert_redirected_to :action => "index"
-    # Make sure the forwarding url has been cleared.
-    assert_nil session[:protected_page]
+    user = { :screen_name => "new_screen_name",
+             :email       => "valid@example.com",
+             :password    => "long_enough_password" }
+    friendly_url_forwarding_aux(:register, :index, user)
   end
 
   private
@@ -237,5 +223,18 @@ class UserControllerTest < Test::Unit::TestCase
   # Authorize a user.
   def authorize(user)
     @request.session[:user_id] = user.id
+  end
+
+  def friendly_url_forwarding_aux(test_page, protected_page, user)
+    # Get a protected page.
+    get protected_page
+    assert_response :redirect
+    assert_redirected_to :action => "login"
+    post test_page, :user  => user
+    assert_response :redirect
+    # This is a hack.  See http://www.ruby-forum.com/topic/69760
+    assert_redirected_to :action => protected_page
+    # Make sure the forwarding url has been cleared.
+    assert_nil session[:protected_page]
   end
 end

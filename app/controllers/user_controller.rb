@@ -14,12 +14,7 @@ class UserController < ApplicationController
       if @user.save
         @user.login!(session)
         flash[:notice] = "User #{@user.screen_name} created!"
-        if (redirect_url = session[:protected_page])
-          session[:protected_page] = nil
-          redirect_to redirect_url
-        else
-          redirect_to :action => "index"
-        end
+        redirect_to_forwarding_url
       else
         @user.clear_password!
       end
@@ -35,12 +30,7 @@ class UserController < ApplicationController
       if user
         user.login!(session)
         flash[:notice] = "User #{user.screen_name} logged in!"
-        if (redirect_url = session[:protected_page])
-          session[:protected_page] = nil
-          redirect_to redirect_url
-        else
-          redirect_to :action => "index"
-        end
+        redirect_to_forwarding_url
       else
         @user.clear_password!
         flash[:notice] = "Invalid screen name/password combination"
@@ -69,5 +59,15 @@ class UserController < ApplicationController
   # Return true if a parameter corresponding to the given symbol was posted.
   def param_posted?(symbol)
     request.post? and params[symbol]
+  end
+
+  # Redirect to the previously requested URL (if present).
+  def redirect_to_forwarding_url
+    if (redirect_url = session[:protected_page])
+      session[:protected_page] = nil
+      redirect_to redirect_url
+    else
+      redirect_to :action => "index"
+    end
   end
 end
