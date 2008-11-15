@@ -95,7 +95,7 @@ class UserControllerTest < Test::Unit::TestCase
                :parent => error_div
     assert_tag "input",
                :attributes => { :name => "user[password]",
-                                 :value => "sun" },
+                                 :value => nil },
                :parent => error_div
   end
 

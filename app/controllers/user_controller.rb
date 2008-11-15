@@ -20,6 +20,8 @@ class UserController < ApplicationController
         else
           redirect_to :action => "index"
         end
+      else
+        @user.clear_password!
       end
     end
   end
@@ -40,8 +42,7 @@ class UserController < ApplicationController
           redirect_to :action => "index"
         end
       else
-        # Don't show the password again in the view.
-        @user.password = nil
+        @user.clear_password!
         flash[:notice] = "Invalid screen name/password combination"
       end
     end
