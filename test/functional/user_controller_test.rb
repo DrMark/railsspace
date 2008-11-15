@@ -1,9 +1,16 @@
-require 'test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
+require 'user_controller'
 
-class UserControllerTest < ActionController::TestCase
+# Re-raise errors caught by the controller.
+class UserController; def rescue_action(e) raise e end; end
+
+class UserControllerTest < Test::Unit::TestCase
   fixtures :users
 
   def setup
+    @controller = UserController.new
+    @request    = ActionController::TestRequest.new
+    @response   = ActionController::TestResponse.new
     # This user is initially valid, but we may change its attributes.
     @valid_user = users(:valid_user)
   end
@@ -188,12 +195,41 @@ class UserControllerTest < ActionController::TestCase
     assert_template "index"
   end
 
+  # Test forward back to protected page after login.
+  def test_login_friendly_url_forwarding
+    # Get a protected page.
+    get :index
+    assert_response :redirect
+    assert_redirected_to :action => "login"
+    try_to_login @valid_user
+    assert_response :redirect
+    assert_redirected_to :action => "index"
+    # Make sure the forwarding url has been cleared.
+    assert_nil session[:protected_page]
+  end
+
+  # Test forward back to protected page after register.
+  def test_register_friendly_url_forwarding
+    # Get a protected page.
+    get :index
+    assert_response :redirect
+    assert_redirected_to :action => "login"
+    post :register, :user  => { :screen_name => "new_screen_name",
+                                :email       => "valid@example.com",
+                                :password    => "long_enough_password" }
+    assert_response :redirect
+    # This is a hack.  See http://www.ruby-forum.com/topic/69760
+    assert_redirected_to :action => "index"
+    # Make sure the forwarding url has been cleared.
+    assert_nil session[:protected_page]
+  end
+
   private
 
   # Try to log a user in using the login action.
   def try_to_login(user)
     post :login, :user => { :screen_name => user.screen_name,
-      :password    => user.password }
+                            :password    => user.password }
   end
 
   # Authorize a user.
