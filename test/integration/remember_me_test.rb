@@ -14,10 +14,13 @@ class RememberMeTest < ActionController::IntegrationTest
     post "user/login", :user => { :screen_name => @user.screen_name,
                                   :password    => @user.password,
                                   :remember_me => "1" }
-    # Simulate "closing the browser" by clearing the user id from the session.
-    @request.session[:user_id] = nil
+    puts session[:user_id]    # Prints "1", the string for @user.id.
+    session[:user_id] = 42    # some bogus value
+    puts session[:user_id]    # Prints "42".
     # Now access an arbitrary page.
     get "site/index"
+    # The session has reverted to its previous value!
+    puts session[:user_id]    # Prints "1"!
     # The check_authorization before_filter should have logged us in.
     assert logged_in?
     assert_equal @user.id, session[:user_id]
